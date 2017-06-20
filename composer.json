@@ -1,0 +1,23 @@
+{
+    "name": "drupal/console-dotenv",
+    "description": "Drupal Console dotenv",
+    "type": "drupal-console-library",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Jesus Manuel Olivas",
+            "email": "jesus.olivas@gmail.com"
+        }
+    ],
+    "require": {
+        "vlucas/phpdotenv":"^2.3"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {"Drupal\\Console\\Dotenv\\": "src"}
+    },
+    "require-dev": {
+        "drupal/console-core": "~1.0"
+    }
+}

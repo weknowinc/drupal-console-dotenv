@@ -1,0 +1,6 @@
+services:
+  console.dotenv_init:
+    class: \Drupal\Console\Dotenv\Command\InitCommand
+    arguments: ['@app.root', '@?console.root']
+    tags:
+      - { name: drupal.command, bootstrap: uninstall }
