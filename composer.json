@@ -1,6 +1,6 @@
 {
     "name": "drupal/console-dotenv",
-    "description": "Drupal Console dotenv",
+    "description": "Drupal Console Dotenv",
     "type": "drupal-console-library",
     "license": "GPL-2.0+",
     "authors": [
