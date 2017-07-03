@@ -4,3 +4,8 @@ services:
     arguments: ['@app.root', '@?console.root']
     tags:
       - { name: drupal.command, bootstrap: uninstall }
+  console.dotenv_debug:
+    class: \Drupal\Console\Dotenv\Command\DebugCommand
+    arguments: ['@app.root', '@?console.root']
+    tags:
+      - { name: drupal.command, bootstrap: uninstall }

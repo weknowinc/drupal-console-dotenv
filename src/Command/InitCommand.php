@@ -49,7 +49,7 @@ class InitCommand extends Command
     protected function configure()
     {
         $this->setName('dotenv:init')
-            ->setDescription('Drupal Console dotenv.');
+            ->setDescription('Dotenv initializer.');
     }
 
     /**
