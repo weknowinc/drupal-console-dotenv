@@ -58,7 +58,7 @@ class DebugCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new DrupalStyle($input, $output);
-        $this->copyFiles($io);
+        $this->debugFile($io);
     }
 
     private function debugFile(DrupalStyle $io) {
