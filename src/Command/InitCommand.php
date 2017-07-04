@@ -4,15 +4,17 @@ namespace Drupal\Console\Dotenv\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Command\Command;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Drupal\Component\Utility\Crypt;
+use Drupal\Console\Dotenv\Generator\InitGenerator;
 use Webmozart\PathUtil\Path;
 
 /**
- * Class ExampleOneCommand
+ * Class InitCommand
  *
  * @package Drupal\Console\Dotenv\Command
  */
@@ -31,18 +33,34 @@ class InitCommand extends Command
     protected $consoleRoot;
 
     /**
+     * @var InitGenerator
+     */
+    protected $generator;
+
+    private $envParameters = [
+        'environment' => 'local',
+        'database_name' => 'drupal',
+        'database_user' => 'drupal',
+        'database_password' => 'drupal',
+        'database_host' => '127.0.0.1',
+        'database_port' => '3306',
+    ];
+
+    /**
      * InitCommand constructor.
      *
-     * @param string               $appRoot
-     * @param string               $consoleRoot
+     * @param string        $appRoot
+     * @param string        $consoleRoot
+     * @param InitGenerator $generator
      */
     public function __construct(
         $appRoot,
-        $consoleRoot = null
-    )
-    {
+        $consoleRoot = null,
+        InitGenerator $generator
+    ) {
         $this->appRoot = $appRoot;
         $this->consoleRoot = $consoleRoot?$consoleRoot:$appRoot;
+        $this->generator = $generator;
         parent::__construct();
     }
 
@@ -55,13 +73,37 @@ class InitCommand extends Command
     /**
      * {@inheritdoc}
      */
+    protected function interact(InputInterface $input, OutputInterface $output)
+    {
+        $io = new DrupalStyle($input, $output);
+        foreach ($this->envParameters as $key => $value) {
+            $this->envParameters[$key] = $io->ask(
+                'Enter value for ' . strtoupper($key),
+                $value
+            );
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new DrupalStyle($input, $output);
         $this->copyFiles($io);
+
+        $this->generator->addSkeletonDir(
+            __DIR__ . '/../../templates'
+        );
+        $this->generator->generate(
+            $io,
+            $this->envParameters,
+            $this->consoleRoot
+        );
     }
 
-    private function copyFiles($io) {
+    private function copyFiles(DrupalStyle $io)
+    {
         $fs = new Filesystem();
         $defaultSettingsFile = $this->appRoot . '/sites/default/default.settings.php';
         $settingsFile = $this->appRoot . '/sites/default/settings.php';
@@ -96,8 +138,8 @@ class InitCommand extends Command
             $settingsFile
         );
 
-        require_once $this->appRoot . '/core/includes/bootstrap.inc';
-        require_once $this->appRoot . '/core/includes/install.inc';
+        include_once $this->appRoot . '/core/includes/bootstrap.inc';
+        include_once $this->appRoot . '/core/includes/install.inc';
 
         $settings['config_directories'] = [
             CONFIG_SYNC_DIRECTORY => (object) [
@@ -105,13 +147,13 @@ class InitCommand extends Command
                     $this->consoleRoot . '/config/sync',
                     $this->appRoot
                 ),
-                'required' => TRUE,
+                'required' => true,
             ],
         ];
 
         $settings['settings']['hash_salt'] = (object) [
             'value'    => Crypt::randomBytesBase64(55),
-            'required' => TRUE,
+            'required' => true,
         ];
 
         drupal_rewrite_settings($settings, $settingsFile);
@@ -133,16 +175,6 @@ class InitCommand extends Command
         );
 
         $io->success('File '.$settingsFile.' created.');
-
-        $envFile = $this->consoleRoot . '/.env';
-        if (!$fs->exists($envFile)) {
-            $fs->copy(
-                __DIR__ . '/../../files/.env.dist',
-                $this->consoleRoot . '/.env',
-                true
-            );
-            $io->success("File .env created.");
-        }
 
         $gitIgnoreFile = $this->consoleRoot . '/.gitignore';
         $gitIgnoreExampleFile = $this->consoleRoot . '/example.gitignore';
