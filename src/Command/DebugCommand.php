@@ -8,11 +8,9 @@ use Symfony\Component\Console\Command\Command;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
 use Drupal\Console\Core\Style\DrupalStyle;
 use Symfony\Component\Filesystem\Filesystem;
-use Drupal\Component\Utility\Crypt;
-use Webmozart\PathUtil\Path;
 
 /**
- * Class ExampleOneCommand
+ * Class DebugCommand
  *
  * @package Drupal\Console\Dotenv\Command
  */
@@ -33,14 +31,13 @@ class DebugCommand extends Command
     /**
      * InitCommand constructor.
      *
-     * @param string               $appRoot
-     * @param string               $consoleRoot
+     * @param string $appRoot
+     * @param string $consoleRoot
      */
     public function __construct(
         $appRoot,
         $consoleRoot = null
-    )
-    {
+    ) {
         $this->appRoot = $appRoot;
         $this->consoleRoot = $consoleRoot?$consoleRoot:$appRoot;
         parent::__construct();
@@ -61,7 +58,8 @@ class DebugCommand extends Command
         $this->debugFile($io);
     }
 
-    private function debugFile(DrupalStyle $io) {
+    private function debugFile(DrupalStyle $io)
+    {
         $fs = new Filesystem();
         $envFile = $this->consoleRoot . '/.env';
         if (!$fs->exists($envFile)) {
