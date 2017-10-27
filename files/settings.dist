@@ -22,7 +22,7 @@ $settings_drupal = array_filter(
 foreach ($settings_drupal as $name => $value) {
   if (substr($name, 0, 9) === 'SETTINGS_') {
     $key = strtolower(substr($name, 9));
-    $settings['settings'][$key] = $value;
+    $settings[$key] = $value;
   }
 }
 
