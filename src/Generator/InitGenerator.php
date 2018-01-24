@@ -18,15 +18,13 @@ use Drupal\Console\Core\Style\DrupalStyle;
 class InitGenerator extends Generator
 {
     /**
-     * @param DrupalStyle $io
-     * @param array       $envParameters
-     * @param string      $consoleRoot
+     * {@inheritdoc}
      */
-    public function generate(
-        DrupalStyle $io,
-        $envParameters,
-        $consoleRoot
-    ) {
+    public function generate(array $parameters)
+    {
+        $io = $parameters['io'];
+        $envParameters = $parameters['env_parameters'];
+        $consoleRoot = $parameters['console_root '];
         $fs = new Filesystem();
         $envFile = $consoleRoot . '/.env';
 
