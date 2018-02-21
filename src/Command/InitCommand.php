@@ -116,18 +116,22 @@ class InitCommand extends Command
         }
 
         if ($fs->exists($settingsFile)) {
-            $fs->rename(
-                $settingsFile,
-                $settingsFile.'.original',
-                true
-            );
+            $settingsFileOriginal = $settingsFile.'.original';
+            if (!$fs->exists($settingsFileOriginal)) {
+                $fs->rename(
+                    $settingsFile,
+                    $settingsFileOriginal,
+                    TRUE
+                );
 
-            $settingsOriginalFile = Path::makeRelative(
-                $settingsFile,
-                $this->consoleRoot
-            );
 
-            $io->success('File '.$settingsOriginalFile.'.original created.');
+                $settingsOriginalFile = Path::makeRelative(
+                    $settingsFile,
+                    $this->consoleRoot
+                );
+
+                $io->success('File '.$settingsOriginalFile.'.original created.');
+            }
         }
 
         $fs->copy(
