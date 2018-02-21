@@ -92,11 +92,11 @@ class InitCommand extends Command
         $this->generator->addSkeletonDir(
             __DIR__ . '/../../templates'
         );
-        $this->generator->generate(
-            $io,
-            $this->envParameters,
-            $this->consoleRoot
-        );
+        $this->generator->generate([
+            'io' => $io,
+            'env_parameters' => $this->envParameters,
+            'console_root' => $this->consoleRoot,
+        ]);
     }
 
     private function copyFiles(DrupalStyle $io)
